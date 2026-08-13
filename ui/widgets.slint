@@ -1,0 +1,13 @@
+// Optional chrome helpers. Prefer Theme.* + std-widgets in apps.
+import { Theme } from "theme.slint";
+
+export component Page inherits Rectangle {
+    background: Theme.page-bg;
+}
+
+export component Panel inherits Rectangle {
+    background: Theme.panel-bg;
+    border-width: 1px;
+    border-color: Theme.border;
+    border-radius: 8px;
+}

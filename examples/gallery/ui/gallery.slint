@@ -1,0 +1,60 @@
+import { Theme } from "theme.slint";
+import { Palette, Button, VerticalBox, HorizontalBox } from "std-widgets.slint";
+
+export { Theme, Palette }
+
+export component Gallery inherits Window {
+    title: "slint-kit gallery";
+    preferred-width: 480px;
+    preferred-height: 360px;
+    background: Theme.page-bg;
+
+    /// Sync std-widgets Palette to Theme.mode (ColorScheme is Slint-side only).
+    public function sync-palette() {
+        Palette.color-scheme = Theme.mode == "light" ? ColorScheme.light : ColorScheme.dark;
+    }
+
+    VerticalBox {
+        padding: 24px;
+        spacing: 16px;
+
+        Text {
+            text: "slint-kit · " + Theme.mode;
+            color: Theme.fg;
+            font-size: 22px;
+            font-weight: 700;
+        }
+        Text {
+            text: "Tokens from LMTT (lmtt-slint.json). Run `lmtt switch` to live-reload.";
+            color: Theme.fg-muted;
+            font-size: 13px;
+            wrap: word-wrap;
+        }
+
+        HorizontalBox {
+            spacing: 8px;
+            Rectangle {
+                width: 48px; height: 48px; border-radius: 8px;
+                background: Theme.accent;
+            }
+            Rectangle {
+                width: 48px; height: 48px; border-radius: 8px;
+                background: Theme.panel-bg;
+                border-width: 1px; border-color: Theme.border;
+            }
+            Rectangle {
+                width: 48px; height: 48px; border-radius: 8px;
+                background: Theme.danger;
+            }
+            Rectangle {
+                width: 48px; height: 48px; border-radius: 8px;
+                background: Theme.tile-selected;
+            }
+        }
+
+        Button {
+            text: "Primary (std-widgets)";
+            primary: true;
+        }
+    }
+}

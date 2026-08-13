@@ -1,0 +1,23 @@
+[package]
+name = "slint-kit"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Shared Slint Theme global + LMTT Material You token bridge"
+repository = "https://github.com/MasonRhodesDev/slint-kit"
+readme = "README.md"
+
+[dependencies]
+slint = { version = "1.17", default-features = false, features = ["std", "compat-1-2"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+dirs = "5"
+notify = "6"
+parking_lot = "0.12"
+
+[dev-dependencies]
+slint = { version = "1.17", default-features = true, features = ["backend-winit", "renderer-femtovg", "compat-1-2"] }
+
+[workspace]
+members = [".", "examples/gallery"]
+resolver = "2"
