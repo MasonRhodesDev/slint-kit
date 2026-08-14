@@ -5,7 +5,13 @@ edition = "2021"
 publish = false
 
 [dependencies]
-slint = { version = "1.17", default-features = true, features = ["backend-winit", "renderer-femtovg", "compat-1-2"] }
+slint = { version = "1.17", default-features = false, features = [
+    "std",
+    "backend-winit",
+    "renderer-skia",
+    "accessibility",
+    "compat-1-2",
+] }
 slint-kit = { path = "../.." }
 
 [build-dependencies]

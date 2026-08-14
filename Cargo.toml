@@ -1,6 +1,6 @@
 [package]
 name = "slint-kit"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 license = "MIT"
 description = "Shared Slint Theme global + LMTT Material You token bridge"
@@ -16,7 +16,7 @@ notify = "6"
 parking_lot = "0.12"
 
 [dev-dependencies]
-slint = { version = "1.17", default-features = true, features = ["backend-winit", "renderer-femtovg", "compat-1-2"] }
+slint = { version = "1.17", default-features = false, features = ["std", "backend-winit", "renderer-skia", "compat-1-2"] }
 
 [workspace]
 members = [".", "examples/gallery"]

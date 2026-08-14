@@ -7,8 +7,12 @@ Shared **Slint** design tokens for Mason apps, fed by
 
 | Path | Role |
 |------|------|
-| `ui/theme.slint` | `Theme` global (semantic + Material tokens) |
-| `ui/widgets.slint` | Optional `Page` / `Panel` chrome |
+| `ui/theme.slint` | `Theme` global (colors, density, `optical-shift`) |
+| `ui/typography.slint` | `KitDisplay` / `KitTitle` / `KitLabel` / `KitMuted` / `KitWarning` |
+| `ui/layout.slint` | `KitVStack` / `KitHStack` / `KitSpacer` / `KitDivider` |
+| `ui/controls.slint` | `KitButton`, `KitCheckBox`, `KitLineEdit`, `KitComboBox`, `KitAlignPad` |
+| `ui/chrome.slint` | Fields, toolbar, heading stack, list rows, badge, panels |
+| `ui/widgets.slint` | `Page` / `Panel` + re-exports |
 | `ThemeBridge` | Load + live-reload from LMTT |
 
 ## Consumer setup
@@ -34,7 +38,8 @@ fn main() {
 
 ```slint
 import { Theme } from "theme.slint";
-import { Palette, ColorScheme, Button } from "std-widgets.slint";
+import { KitButton, KitAlignPad } from "widgets.slint";
+import { Palette, VerticalBox, HorizontalBox, ScrollView } from "std-widgets.slint";
 
 export { Theme, Palette }
 
@@ -72,8 +77,15 @@ Fallback order: `lmtt-slint.json` → `lmtt-colors.css` → embedded dark/light.
 
 ## Semantic properties
 
-Prefer: `page-bg`, `panel-bg`, `fg`, `fg-muted`, `border`, `accent`, `on-accent`,
+Prefer colors: `page-bg`, `panel-bg`, `fg`, `fg-muted`, `border`, `accent`, `on-accent`,
 `danger`, `canvas-bg`, `tile-bg`, `tile-selected`.
+
+Prefer density: `space-xs`…`space-xl`, `control-height`, `control-height-sm`,
+`control-pad-x`, `radius-sm` / `radius-md`, `font-body` / `font-label` / `font-title`.
+
+Prefer controls from `widgets.slint` / `controls.slint` over Fluent `std-widgets`
+`Button` / `CheckBox` / `ComboBox` / `LineEdit`. `KitAlignPad` is the shared
+place-beside chrome (`place(0..3)` = Left / Right / Above / Below).
 
 ## Vigil / overlays
 

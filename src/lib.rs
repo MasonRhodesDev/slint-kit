@@ -89,6 +89,7 @@ macro_rules! apply_theme {
         theme.set_canvas_bg(background);
         theme.set_tile_bg(surface_container_high);
         theme.set_tile_selected(primary_container);
+        theme.set_warning_fg(secondary);
     }};
 }
 

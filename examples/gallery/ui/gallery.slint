@@ -1,60 +1,139 @@
 import { Theme } from "theme.slint";
-import { Palette, Button, VerticalBox, HorizontalBox } from "std-widgets.slint";
+import {
+    KitButton, KitIconButton, KitCheckBox, KitLineEdit, KitComboBox, KitAlignPad,
+    KitDisplay, KitMuted, KitTitle, KitLabel, KitWarning, KitBadge,
+    KitVStack, KitHStack, KitSpacer, KitDivider,
+    KitField, KitListRow, KitDisclosure, KitToolbar, KitHeadingStack,
+    Panel
+} from "widgets.slint";
+import { Palette, ScrollView } from "std-widgets.slint";
 
 export { Theme, Palette }
 
 export component Gallery inherits Window {
     title: "slint-kit gallery";
-    preferred-width: 480px;
-    preferred-height: 360px;
+    preferred-width: 560px;
+    preferred-height: 820px;
     background: Theme.page-bg;
 
-    /// Sync std-widgets Palette to Theme.mode (ColorScheme is Slint-side only).
+    in-out property <string> status: "Ready";
+    in-out property <string> edit-text: "edit me";
+    in-out property <[string]> combo-model: ["One", "Two", "Three"];
+    in-out property <int> combo-index: 0;
+    in-out property <bool> check-on: true;
+    in-out property <bool> advanced: false;
+
     public function sync-palette() {
         Palette.color-scheme = Theme.mode == "light" ? ColorScheme.light : ColorScheme.dark;
     }
 
-    VerticalBox {
-        padding: 24px;
-        spacing: 16px;
+    ScrollView {
+        width: 100%;
+        height: 100%;
+        KitVStack {
+            gap: "loose";
+            padding: Theme.space-xl;
 
-        Text {
-            text: "slint-kit · " + Theme.mode;
-            color: Theme.fg;
-            font-size: 22px;
-            font-weight: 700;
-        }
-        Text {
-            text: "Tokens from LMTT (lmtt-slint.json). Run `lmtt switch` to live-reload.";
-            color: Theme.fg-muted;
-            font-size: 13px;
-            wrap: word-wrap;
-        }
+            KitDisplay { text: "slint-kit · " + Theme.mode; }
+            KitMuted {
+                text: "Density + chrome helpers. LMTT live-reloads colors.";
+                wrap-text: true;
+            }
 
-        HorizontalBox {
-            spacing: 8px;
-            Rectangle {
-                width: 48px; height: 48px; border-radius: 8px;
-                background: Theme.accent;
+            KitTitle { text: "Colors"; }
+            KitHStack {
+                gap: "form";
+                Rectangle { width: 48px; height: 48px; border-radius: Theme.radius-md; background: Theme.accent; }
+                Rectangle {
+                    width: 48px; height: 48px; border-radius: Theme.radius-md;
+                    background: Theme.panel-bg; border-width: Theme.border-width; border-color: Theme.border;
+                }
+                Rectangle { width: 48px; height: 48px; border-radius: Theme.radius-md; background: Theme.danger; }
+                Rectangle { width: 48px; height: 48px; border-radius: Theme.radius-md; background: Theme.tile-selected; }
             }
-            Rectangle {
-                width: 48px; height: 48px; border-radius: 8px;
-                background: Theme.panel-bg;
-                border-width: 1px; border-color: Theme.border;
-            }
-            Rectangle {
-                width: 48px; height: 48px; border-radius: 8px;
-                background: Theme.danger;
-            }
-            Rectangle {
-                width: 48px; height: 48px; border-radius: 8px;
-                background: Theme.tile-selected;
-            }
-        }
 
-        Button {
-            text: "Primary (std-widgets)";
-            primary: true;
+            KitTitle { text: "Metrics"; }
+            KitLabel {
+                text: "row " + Theme.row-height / 1px
+                    + " · control " + Theme.control-height / 1px
+                    + " · fonts " + Theme.font-label / 1px + "/" + Theme.font-body / 1px
+                    + "/" + Theme.font-title / 1px + "/" + Theme.font-display / 1px;
+            }
+
+            KitDivider { }
+            KitTitle { text: "Controls"; }
+            KitHStack {
+                gap: "form";
+                center: true;
+                KitButton { text: "Primary"; primary: true; clicked => { root.status = "Primary"; } }
+                KitButton { text: "Default"; clicked => { root.status = "Default"; } }
+                KitButton { text: "Danger"; danger: true; clicked => { root.status = "Danger"; } }
+                KitButton { text: "Small"; small: true; clicked => { root.status = "Small"; } }
+                KitIconButton { text: "+"; small: true; clicked => { root.status = "Icon+"; } }
+                KitSpacer { }
+                KitBadge { text: "shared"; tone: "accent"; }
+            }
+
+            KitField {
+                label: "Line edit";
+                hint: "optional hint";
+                KitLineEdit {
+                    text: root.edit-text;
+                    edited(t) => { root.edit-text = t; root.status = "Edited: " + t; }
+                }
+            }
+            KitField {
+                label: "Combo";
+                KitComboBox {
+                    model: root.combo-model;
+                    current-index: root.combo-index;
+                    selected(i) => { root.combo-index = i; root.status = "Combo: " + root.combo-model[i]; }
+                }
+            }
+
+            KitCheckBox {
+                text: "Snap / toggle sample";
+                checked: root.check-on;
+                toggled(v) => { root.check-on = v; root.status = v ? "Checked" : "Unchecked"; }
+            }
+
+            KitDisclosure {
+                label: "Match / advanced";
+                open <=> root.advanced;
+            }
+            if root.advanced: KitLabel { text: "advanced body"; }
+
+            KitTitle { text: "List"; }
+            KitListRow {
+                title: "ultrawide-with-secondary";
+                meta: "user";
+                matched: true;
+                active: true;
+                clicked => { root.status = "Row clicked"; }
+            }
+            KitListRow {
+                title: "office";
+                meta: "shared";
+                clicked => { root.status = "Row 2"; }
+            }
+
+            Panel {
+                KitVStack {
+                    gap: "form";
+                    padding: Theme.space-md;
+                    KitAlignPad {
+                        place(op) => {
+                            if (op == 0) { root.status = "Place Left"; }
+                            if (op == 1) { root.status = "Place Right"; }
+                            if (op == 2) { root.status = "Place Above"; }
+                            if (op == 3) { root.status = "Place Below"; }
+                        }
+                    }
+                }
+            }
+
+            KitWarning { text: "Sample warning callout"; }
+            KitMuted { text: root.status; }
         }
     }
 }
