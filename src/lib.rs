@@ -2,16 +2,23 @@
 mod tokens;
 
 pub use tokens::{
-    css_path, embedded_fallback, load_css, load_json, load_tokens, matugen_dir, parse_hex,
-    slint_json_path, TokenSet,
+    css_path, embedded_fallback, kit_color_bindings, load_css, load_json, load_tokens,
+    load_tokens_preferring, load_tokens_system, matugen_dir, parse_hex, slint_json_path,
+    system_matugen_dir, TokenSet,
 };
 
 use std::path::PathBuf;
+
+#[cfg(feature = "watch")]
 use std::sync::Arc;
+#[cfg(feature = "watch")]
 use std::time::{Duration, Instant};
 
+#[cfg(feature = "watch")]
 use notify::{Event, RecommendedWatcher, RecursiveMode, Watcher};
+#[cfg(feature = "watch")]
 use parking_lot::Mutex;
+#[cfg(feature = "watch")]
 use slint::{ComponentHandle, Weak};
 
 /// Absolute path to this crate's `ui/` directory (for `slint_build` import paths).
@@ -94,10 +101,12 @@ macro_rules! apply_theme {
 }
 
 /// Keep the watcher alive for the process lifetime.
+#[cfg(feature = "watch")]
 pub struct ThemeBridge {
     _watcher: RecommendedWatcher,
 }
 
+#[cfg(feature = "watch")]
 impl ThemeBridge {
     /// Load tokens once, invoke `apply`, then watch `~/.config/matugen` for changes.
     pub fn attach<C, F>(weak: Weak<C>, apply: F) -> Result<Self, String>

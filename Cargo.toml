@@ -12,8 +12,12 @@ slint = { version = "1.17", default-features = false, features = ["std", "compat
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 dirs = "5"
-notify = "6"
-parking_lot = "0.12"
+notify = { version = "6", optional = true }
+parking_lot = { version = "0.12", optional = true }
+
+[features]
+default = ["watch"]
+watch = ["dep:notify", "dep:parking_lot"]
 
 [dev-dependencies]
 slint = { version = "1.17", default-features = false, features = ["std", "backend-winit", "renderer-skia", "compat-1-2"] }

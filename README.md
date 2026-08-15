@@ -73,7 +73,12 @@ public function sync-palette() {
 `lmtt switch` writes `~/.config/matugen/lmtt-slint.json` via the built-in `slint` module.
 `ThemeBridge` watches that directory and re-applies without restarting the app.
 
-Fallback order: `lmtt-slint.json` → `lmtt-colors.css` → embedded dark/light.
+Fallback order (`load_tokens` / `load_tokens_preferring`): user
+`lmtt-slint.json` → `/etc/matugen/lmtt-slint.json` → matching CSS files →
+embedded dark/light.
+
+Pre-login (`load_tokens_system`): `/etc/matugen/lmtt-slint.json` →
+`/etc/matugen/lmtt-colors.css` → embedded. Does not read `$HOME`.
 
 ## Semantic properties
 
@@ -89,5 +94,9 @@ place-beside chrome (`place(0..3)` = Left / Right / Above / Below).
 
 ## Vigil / overlays
 
-Vigil keeps its interpreter theme contract. Map the same JSON keys into theme
-`color-scheme` + accent when adopting LMTT there.
+Vigil's default interpreter theme imports this crate's `Theme` global and the
+same LMTT files. The greetd greeter should call `load_tokens_system` (system
+files only, no `$HOME`). Lock and session UIs may use `load_tokens_preferring`
+(user config, then `/etc/matugen`). Custom themes may still use only
+`color-scheme` + `accent-color`. Copy `lmtt-slint.json` to `/etc/matugen/` so
+the greetd greeter matches the session without a home directory.
