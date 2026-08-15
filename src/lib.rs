@@ -2,9 +2,8 @@
 mod tokens;
 
 pub use tokens::{
-    css_path, embedded_fallback, kit_color_bindings, load_css, load_json, load_tokens,
-    load_tokens_preferring, load_tokens_system, matugen_dir, parse_hex, slint_json_path,
-    system_matugen_dir, TokenSet,
+    embedded_fallback, kit_color_bindings, load_tokens, load_tokens_preferring, load_tokens_system,
+    parse_hex, TokenSet,
 };
 
 use std::path::PathBuf;
@@ -108,7 +107,7 @@ pub struct ThemeBridge {
 
 #[cfg(feature = "watch")]
 impl ThemeBridge {
-    /// Load tokens once, invoke `apply`, then watch `~/.config/matugen` for changes.
+    /// Load tokens once, invoke `apply`, then watch LMTT's token file.
     pub fn attach<C, F>(weak: Weak<C>, apply: F) -> Result<Self, String>
     where
         C: ComponentHandle + 'static,
@@ -136,7 +135,7 @@ impl ThemeBridge {
             let relevant = event.paths.iter().any(|p| {
                 p.file_name()
                     .and_then(|n| n.to_str())
-                    .is_some_and(|n| n == "lmtt-slint.json" || n == "lmtt-colors.css")
+                    .is_some_and(|n| n == "tokens.json")
             });
             if !relevant {
                 return;
@@ -159,11 +158,13 @@ impl ThemeBridge {
         })
         .map_err(|e| e.to_string())?;
 
-        if let Some(dir) = matugen_dir() {
-            let _ = std::fs::create_dir_all(&dir);
-            watcher
-                .watch(&dir, RecursiveMode::NonRecursive)
-                .map_err(|e| e.to_string())?;
+        if let Ok(path) = lmtt_core::tokens::user_tokens_path() {
+            if let Some(dir) = path.parent() {
+                let _ = std::fs::create_dir_all(dir);
+                watcher
+                    .watch(dir, RecursiveMode::NonRecursive)
+                    .map_err(|e| e.to_string())?;
+            }
         }
 
         Ok(Self { _watcher: watcher })

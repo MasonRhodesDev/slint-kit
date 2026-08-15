@@ -70,15 +70,17 @@ public function sync-palette() {
 
 ## LMTT
 
-`lmtt switch` writes `~/.config/matugen/lmtt-slint.json` via the built-in `slint` module.
-`ThemeBridge` watches that directory and re-applies without restarting the app.
+`lmtt switch` writes the current palette through `lmtt-core`. Suite apps load
+tokens with `load_tokens` / `load_tokens_system` or `lmtt tokens`. Do not open
+theme files.
 
-Fallback order (`load_tokens` / `load_tokens_preferring`): user
-`lmtt-slint.json` → `/etc/matugen/lmtt-slint.json` → matching CSS files →
-embedded dark/light.
+`ThemeBridge` watches LMTT's token file and re-applies without restarting.
 
-Pre-login (`load_tokens_system`): `/etc/matugen/lmtt-slint.json` →
-`/etc/matugen/lmtt-colors.css` → embedded. Does not read `$HOME`.
+Fallback order (`load_tokens` / `load_tokens_preferring`): user data →
+`/etc/lmtt/tokens.json` → `/usr/share/lmtt/tokens.json` → embedded.
+
+Pre-login (`load_tokens_system`): `/etc/lmtt/tokens.json` → packaged →
+embedded. Does not read the user tree.
 
 ## Semantic properties
 

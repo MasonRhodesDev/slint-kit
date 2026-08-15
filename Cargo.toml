@@ -9,9 +9,7 @@ readme = "README.md"
 
 [dependencies]
 slint = { version = "1.17", default-features = false, features = ["std", "compat-1-2"] }
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-dirs = "5"
+lmtt-core = { git = "https://github.com/MasonRhodesDev/linux-multi-theme-toggle", rev = "130fbbf384fe3a19378fe0c2c26acb648d2cdd94" }
 notify = { version = "6", optional = true }
 parking_lot = { version = "0.12", optional = true }
 
