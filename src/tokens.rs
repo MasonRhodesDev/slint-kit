@@ -2,7 +2,7 @@
 use std::collections::HashMap;
 
 use lmtt_core::tokens::{load_preferring, load_system};
-use lmtt_core::{ColorScheme, ThemeMode};
+use lmtt_core::{ColorScheme, ThemeMode, SCHEMA_VERSION};
 use slint::Color;
 
 #[derive(Debug, Clone)]
@@ -146,6 +146,7 @@ pub fn parse_hex(s: &str) -> Option<Color> {
 pub fn embedded_fallback(mode: &str) -> TokenSet {
     let mode = theme_mode(mode);
     token_set_from_scheme(ColorScheme {
+        version: SCHEMA_VERSION,
         mode,
         colors: lmtt_core::fallback::fallback_colors(mode),
     })

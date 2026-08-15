@@ -103,6 +103,7 @@ macro_rules! apply_theme {
 #[cfg(feature = "watch")]
 pub struct ThemeBridge {
     _watcher: RecommendedWatcher,
+    _portal_thread: Option<std::thread::JoinHandle<()>>,
 }
 
 #[cfg(feature = "watch")]
@@ -167,6 +168,64 @@ impl ThemeBridge {
             }
         }
 
-        Ok(Self { _watcher: watcher })
+        let portal_thread = spawn_portal_wake(weak, apply);
+
+        Ok(Self {
+            _watcher: watcher,
+            _portal_thread: portal_thread,
+        })
     }
+}
+
+#[cfg(feature = "watch")]
+fn spawn_portal_wake<C, F>(
+    weak: Weak<C>,
+    apply: Arc<F>,
+) -> Option<std::thread::JoinHandle<()>>
+where
+    C: ComponentHandle + 'static,
+    F: Fn(&C, &TokenSet) + Send + Sync + 'static,
+{
+    std::thread::Builder::new()
+        .name("lmtt-portal-wake".into())
+        .spawn(move || {
+            let Ok(conn) = zbus::blocking::Connection::session() else {
+                return;
+            };
+            let Ok(proxy) = zbus::blocking::Proxy::new(
+                &conn,
+                "org.freedesktop.portal.Desktop",
+                "/org/freedesktop/portal/desktop",
+                "org.freedesktop.portal.Settings",
+            ) else {
+                return;
+            };
+            let Ok(signals) = proxy.receive_signal_with_args(
+                "SettingChanged",
+                &[(0, "org.freedesktop.appearance")],
+            ) else {
+                return;
+            };
+            for msg in signals {
+                let Ok((_ns, key, _value)): Result<
+                    (String, String, zbus::zvariant::OwnedValue),
+                    _,
+                > = msg.body().deserialize()
+                else {
+                    continue;
+                };
+                if key != "color-scheme" && key != "accent-color" {
+                    continue;
+                }
+                let weak = weak.clone();
+                let apply = apply.clone();
+                let _ = slint::invoke_from_event_loop(move || {
+                    let tokens = load_tokens();
+                    if let Some(ui) = weak.upgrade() {
+                        apply(&ui, &tokens);
+                    }
+                });
+            }
+        })
+        .ok()
 }
