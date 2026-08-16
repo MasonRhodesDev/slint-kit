@@ -9,7 +9,7 @@ readme = "README.md"
 
 [dependencies]
 slint = { version = "1.17", default-features = false, features = ["std", "compat-1-2"] }
-lmtt-core = { git = "https://github.com/MasonRhodesDev/linux-multi-theme-toggle", rev = "7e0bb1705d16a3a8d37a795fc3d324dae47fbda9" }
+lmtt-core = { git = "https://github.com/MasonRhodesDev/linux-multi-theme-toggle", rev = "344529cd124c131da40409b152bc1604eebd53d0" }
 notify = { version = "6", optional = true }
 parking_lot = { version = "0.12", optional = true }
 zbus = { version = "4.4", default-features = false, features = ["async-io"], optional = true }
