@@ -4,7 +4,7 @@ import {
     KitDisplay, KitMuted, KitTitle, KitLabel, KitWarning, KitBadge,
     KitVStack, KitHStack, KitSpacer, KitDivider,
     KitField, KitListRow, KitDisclosure, KitToolbar, KitHeadingStack,
-    Panel
+    KitConfirm, Panel
 } from "widgets.slint";
 import { Palette, ScrollView } from "std-widgets.slint";
 
@@ -22,6 +22,9 @@ export component Gallery inherits Window {
     in-out property <int> combo-index: 0;
     in-out property <bool> check-on: true;
     in-out property <bool> advanced: false;
+    in-out property <string> secret: "";
+    in-out property <bool> confirming: false;
+    in-out property <bool> remove-home: false;
 
     public function sync-palette() {
         Palette.color-scheme = Theme.mode == "light" ? ColorScheme.light : ColorScheme.dark;
@@ -83,6 +86,16 @@ export component Gallery inherits Window {
                 }
             }
             KitField {
+                label: "Password";
+                hint: "placeholder + Enter → accepted";
+                KitLineEdit {
+                    text <=> root.secret;
+                    input-type: password;
+                    placeholder: "New password";
+                    accepted(t) => { root.status = "Accepted " + t.character-count + " chars"; }
+                }
+            }
+            KitField {
                 label: "Combo";
                 KitComboBox {
                     model: root.combo-model;
@@ -115,6 +128,23 @@ export component Gallery inherits Window {
                 title: "office";
                 meta: "shared";
                 clicked => { root.status = "Row 2"; }
+            }
+            KitListRow {
+                title: "Ada Lovelace";
+                meta: "Administrator";
+                initials: "AL";
+                clicked => { root.confirming = true; }
+            }
+            if root.confirming: KitConfirm {
+                title: "Delete ada?";
+                message: "Their files stay unless you remove the home directory.";
+                KitCheckBox {
+                    text: "Remove home directory";
+                    checked: root.remove-home;
+                    toggled(v) => { root.remove-home = v; }
+                }
+                confirmed => { root.confirming = false; root.status = root.remove-home ? "Deleted + home" : "Deleted"; }
+                cancelled => { root.confirming = false; root.status = "Cancelled"; }
             }
 
             Panel {

@@ -10,8 +10,8 @@ Shared **Slint** design tokens for Mason apps, fed by
 | `ui/theme.slint` | `Theme` global (colors, density, `optical-shift`) |
 | `ui/typography.slint` | `KitDisplay` / `KitTitle` / `KitLabel` / `KitMuted` / `KitWarning` |
 | `ui/layout.slint` | `KitVStack` / `KitHStack` / `KitSpacer` / `KitDivider` |
-| `ui/controls.slint` | `KitButton`, `KitCheckBox`, `KitLineEdit`, `KitComboBox`, `KitAlignPad` |
-| `ui/chrome.slint` | Fields, toolbar, heading stack, list rows, badge, panels |
+| `ui/controls.slint` | `KitButton`, `KitCheckBox`, `KitLineEdit` (password / placeholder / `accepted`), `KitComboBox`, `KitAlignPad` |
+| `ui/chrome.slint` | Fields, toolbar, heading stack, list rows (optional avatar), badge, panels, `KitConfirm` |
 | `ui/widgets.slint` | `Page` / `Panel` + re-exports |
 | `ThemeBridge` | Load + live-reload from LMTT |
 
